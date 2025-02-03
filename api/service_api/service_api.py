@@ -48,6 +48,13 @@ async def registration(user_model :User):
     if result:
         return {"status": 0, "message": "Регистрация прошла успешно!"}
 
+@service_router.post("/login")
+async def login(identificator:str,password:str):
+    user = login_db(identificator=identificator, password=password)
+    if user:
+        return {"status": 0, "message": "Логин прошел успешен!"}
+    return {"status": 1, "message": "Введите информацию правильно"}
+
 
 
 

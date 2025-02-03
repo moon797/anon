@@ -22,7 +22,7 @@ def check_email(email:str):
         return True
     return False
 
-def registration_db(username:str, phone_number:str, email:str,password:int, country:str=None, birthday:str=None):
+def registration_db(username:str, phone_number:str, email:str,password:str, country:str=None, birthday:str=None):
     db = next(get_db())
     if check_username(username):
         return "Такое имя пользователя занято, попробуйте новый."
@@ -34,7 +34,7 @@ def registration_db(username:str, phone_number:str, email:str,password:int, coun
     db.add(new_user)
     db.commit()
 
-def login_db(identificator, password:int):
+def login_db(identificator, password:str):
     with next(get_db()) as db:
         user = db.query(User).filter_by(username=identificator).first()
         if not user:
