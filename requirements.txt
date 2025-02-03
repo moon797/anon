@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+sqlalchemy
+python-multipart
+python-magic
+libmagic
+psycopg2
