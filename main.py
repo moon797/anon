@@ -7,18 +7,16 @@ from typing import Optional
 from datetime import datetime, timedelta
 
 from database import get_db
-from database.users import User  # Модель SQLAlchemy для пользователя
+from database.users import User
 from config import algorithm, secret_key, access_token_exp_minutes
 
 app = FastAPI(docs_url="/")
 
-# Включаем маршруты
 from api.service_api.service_api import service_router
 from api.users.users_api import user_router
 app.include_router(user_router)
 app.include_router(service_router)
 
-# Понимание токенов
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -45,7 +43,6 @@ class UserOut(BaseModel):
         from_attributes = True
 
 
-# Функции для работы с паролями и пользователями
 def verify_password(password, hashed_password):
     return password == hashed_password
 
@@ -69,10 +66,8 @@ def authenticate_user(db: Session, username: str, password: str):
         return user
     return None
 
-# OAuth2 схема
 oauth_schema = OAuth2PasswordBearer(tokenUrl="token")
 
-# Получение текущего пользователя по токену
 async def get_current_user(token: str = Depends(oauth_schema), db: Session = Depends(get_db)):
     exception = HTTPException(status_code=404, detail="User not found")
     try:
@@ -87,7 +82,6 @@ async def get_current_user(token: str = Depends(oauth_schema), db: Session = Dep
         raise exception
     return user
 
-# Endpoint для получения токена
 @app.post("/token", response_model=Token)
 async def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(db, form.username, form.password)
@@ -97,7 +91,6 @@ async def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
     access_token = create_access_token(data={"sub": user.username}, expire_date=access_token_expire)
     return {"access_token": access_token, "token_type": "bearer"}
 
-# Endpoint для получения информации о текущем пользователе
 @app.get("/user/me", response_model=UserOut)
 async def user_me(user: UserOut = Depends(get_current_user)):
     return user
