@@ -1,4 +1,16 @@
 from fastapi import FastAPI, HTTPException, Depends
+from database import  engine, Base
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(docs_url="/")
+
+from api.service_api.service_api import service_router
+from api.users.users_api import user_router
+app.include_router(user_router)
+app.include_router(service_router)
+
+
+
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -10,12 +22,6 @@ from database import get_db
 from database.users import User
 from config import algorithm, secret_key, access_token_exp_minutes
 
-app = FastAPI(docs_url="/")
-
-from api.service_api.service_api import service_router
-from api.users.users_api import user_router
-app.include_router(user_router)
-app.include_router(service_router)
 
 class Token(BaseModel):
     access_token: str
