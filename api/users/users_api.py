@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from database.users import *
-from fastapi.responses import JSONResponse
 
 user_router = APIRouter(tags=["Управление пользователями"], prefix="/user")
 
